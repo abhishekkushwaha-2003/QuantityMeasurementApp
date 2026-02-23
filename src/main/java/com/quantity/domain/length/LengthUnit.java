@@ -1,34 +1,41 @@
 package com.quantity.domain.length;
 
-public enum LengthUnit {
+import com.quantity.domain.IMeasurable;
 
-    FEET(1.0),                
+public enum LengthUnit implements IMeasurable {
+
+    FEET(1.0),
     INCHES(1.0 / 12.0),
     YARDS(3.0),
-    CENTIMETERS(1.0/30.48);
+    CENTIMETERS(1.0 / 30.48);
 
-    private final double conversionFactorToFeet;
+    private final double conversionFactor;
 
-    LengthUnit(double conversionFactorToFeet) {
-        this.conversionFactorToFeet = conversionFactorToFeet;
+    LengthUnit(double conversionFactor) {
+        this.conversionFactor = conversionFactor;
     }
 
+    @Override
     public double getConversionFactor() {
-        return conversionFactorToFeet;
+        return conversionFactor;
     }
 
+    @Override
     public double convertToBaseUnit(double value) {
-
         if(!Double.isFinite(value))
             throw new IllegalArgumentException("Invalid numeric value");
-
-        return value * conversionFactorToFeet;
+        return value * conversionFactor;
     }
-    public double convertFromBaseUnit(double baseValue) {
 
+    @Override
+    public double convertFromBaseUnit(double baseValue) {
         if(!Double.isFinite(baseValue))
             throw new IllegalArgumentException("Invalid numeric value");
+        return baseValue / conversionFactor;
+    }
 
-        return baseValue / conversionFactorToFeet;
+    @Override
+    public String getUnitName() {
+        return name();
     }
 }
