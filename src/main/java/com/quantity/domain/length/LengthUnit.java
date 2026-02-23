@@ -2,7 +2,7 @@ package com.quantity.domain.length;
 
 public enum LengthUnit {
 
-    FEET(1.0),                 // Base Unit
+    FEET(1.0),                
     INCHES(1.0 / 12.0),
     YARDS(3.0),
     CENTIMETERS(1.0/30.48);
@@ -24,7 +24,6 @@ public enum LengthUnit {
 
         return value * conversionFactorToFeet;
     }
-
     public double convertFromBaseUnit(double baseValue) {
 
         if(!Double.isFinite(baseValue))
