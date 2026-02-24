@@ -454,5 +454,123 @@ System now supports:
 
 ---
 
+# Quantity Measurement Application  
+## Test-Driven Development (TDD) | OOP | Clean Code | DRY Principle  
+
+---
+
+## 📅 23 Feb 2026  
+### 🔹 UC12 – Subtraction & Division Operations on Quantity  
+**Branch:** `feature/UC12-SubtractionAndDivision`
+
+### Objective
+- Add subtraction support between quantities  
+- Add division support returning dimensionless result  
+- Maintain immutability and type safety  
+- Support cross-unit arithmetic within same category  
+
+### Implementation
+- Added `subtract()` method (implicit & explicit target unit)  
+- Added `divide()` method returning `double`  
+- Converted operands to base unit before arithmetic  
+- Implemented validation (null, cross-category, division by zero)  
+- Rounded subtraction results to two decimal places  
+- Ensured non-commutative behavior (A − B ≠ B − A, A ÷ B ≠ B ÷ A)  
+- Added comprehensive JUnit test coverage  
+
+### Result
+System now supports:
+- Equality  
+- Conversion  
+- Addition  
+- Subtraction  
+- Division  
+
+Across:
+- Length  
+- Weight  
+- Volume  
+
+- [feature/UC12-SubtractionAndDivision](https://github.com/abhishekkushwaha-2003/QuantityMeasurementApp/tree/feature/UC12-SubtractionAndDivision)
+
+---
+# Quantity Measurement Application  
+## Test-Driven Development (TDD) | OOP | Clean Code | DRY Principle  
+
+---
+
+## 📅 23 Feb 2026  
+### 🔹 UC13 – Centralized Arithmetic Logic (DRY Enforcement)  
+**Branch:** `feature/UC13-CentralizedArithmeticLogic`
+
+### Objective
+- Eliminate code duplication in add, subtract, and divide methods  
+- Enforce DRY principle through centralized arithmetic handling  
+- Preserve public API and behavior from UC12  
+- Improve maintainability and scalability  
+
+### Implementation
+- Introduced private `ArithmeticOperation` enum (ADD, SUBTRACT, DIVIDE)  
+- Implemented centralized `performBaseArithmetic()` helper method  
+- Created `validateArithmeticOperands()` for unified validation  
+- Moved base-unit conversion logic into helper  
+- Refactored `add()`, `subtract()`, and `divide()` to delegate to helper  
+- Preserved implicit and explicit target unit handling  
+- Ensured consistent error handling across all operations  
+- Maintained immutability and backward compatibility  
+
+### 🏗 Result
+- Validation logic defined once (Single Source of Truth)  
+- Conversion logic centralized  
+- No duplication across arithmetic methods  
+- Public API unchanged  
+- All UC12 test cases pass without modification  
+- System now fully DRY-compliant for arithmetic operations  
+
+Future operations (e.g., Multiply, Modulo) can be added without duplicating validation or conversion logic.
+
+- [feature/UC13-CentralizedArithmeticLogic](https://github.com/abhishekkushwaha-2003/QuantityMeasurementApp/tree/feature/UC13-CentralizedArithmeticLogic)
+
+---
+# Quantity Measurement Application  
+## Test-Driven Development (TDD) | OOP | SOLID | Interface Segregation Principle  
+
+---
+
+## 📅 23 Feb 2026  
+### 🔹 UC14 – Temperature Measurement with Selective Arithmetic Support & IMeasurable Refactoring  
+**Branch:** `feature/UC14-TemperatureMeasurement`
+
+### Objective
+- Add Temperature measurement support (Celsius, Fahrenheit, Kelvin)  
+- Support equality and conversion for temperature  
+- Restrict unsupported arithmetic operations (add, subtract, divide)  
+- Refactor `IMeasurable` to allow optional arithmetic operations  
+- Maintain backward compatibility with UC1–UC13  
+
+### Implementation
+- Introduced `TemperatureUnit` enum (CELSIUS, FAHRENHEIT, KELVIN)  
+- Added `SupportsArithmetic` functional interface  
+- Added default methods in `IMeasurable` for operation validation  
+- Used lambda expressions for non-linear temperature conversion formulas  
+- Disabled arithmetic operations for temperature via override  
+- Updated `Quantity` to validate operation support before execution  
+- Preserved cross-category type safety using generics  
+
+### Result
+- Temperature supports only equality and conversion  
+- Unsupported operations throw `UnsupportedOperationException`  
+- Interface Segregation Principle properly applied  
+- No changes required for Length, Weight, or Volume units  
+- All UC1–UC13 test cases pass without modification  
+- System now supports category-specific operational constraints  
+
+Future measurement categories with different rules can be added without breaking the architecture.
+
+- [feature/UC14-TemperatureMeasurement](https://github.com/abhishekkushwaha-2003/QuantityMeasurementApp/tree/feature/UC14-TemperatureMeasurement)
+
+---
+
+
 
 
