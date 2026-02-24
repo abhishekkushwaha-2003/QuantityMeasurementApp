@@ -5,7 +5,7 @@
 
 ## 📅 23 Feb 2026  
 ### 🔹 UC14 – Temperature Measurement with Selective Arithmetic Support & IMeasurable Refactoring  
-**Branch:** `feature/UC14-TemperatureMeasurementSelectiveArithmetic`
+**Branch:** `feature/UC14-TemperatureMeasurement`
 
 ### Objective
 - Add Temperature measurement support (Celsius, Fahrenheit, Kelvin)  
