@@ -24,7 +24,7 @@ public class QuantityMeasurementApp {
 		QuantityMeasurementServiceImpl service = new QuantityMeasurementServiceImpl(this.repository);
 		this.controller = new QuantityMeasurementController(service);
 		logger.info("Application Architected with Database Dependency Injection.");
-	}
+	} 
 
 	public static QuantityMeasurementApp getInstance() {
 		if (instance == null) {
