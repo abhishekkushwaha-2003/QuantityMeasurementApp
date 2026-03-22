@@ -10,7 +10,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-import com.app.quantitymeasurement.entity.QuantityMeasurementEntity;
+import com.app.quantitymeasurement.model.QuantityMeasurementEntity;
 
 class AppendableObjectOutputStream extends ObjectOutputStream {
 	public AppendableObjectOutputStream(OutputStream out) throws IOException {

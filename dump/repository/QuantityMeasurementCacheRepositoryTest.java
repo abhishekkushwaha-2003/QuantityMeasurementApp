@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.app.quantitymeasurement.entity.QuantityMeasurementEntity;
+import com.app.quantitymeasurement.model.QuantityMeasurementEntity;
 
 public class QuantityMeasurementCacheRepositoryTest {
 

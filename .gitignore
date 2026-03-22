@@ -1,25 +1,7 @@
-# Maven
-target/
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-pom.xml.next
-release.properties
-
-# Eclipse
-.metadata
-.settings/
+/target/
+*.class
 .project
 .classpath
-bin/
-src/bin/
-
-# STS
-.springBeans
-
-# IntelliJ
-.idea/
-*.iml
-
-# Logs
-*.log
+.settings/
+.metadata/
+/dump/

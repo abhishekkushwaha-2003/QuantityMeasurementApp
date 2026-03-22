@@ -6,7 +6,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.app.quantitymeasurement.entity.QuantityMeasurementEntity;
+import com.app.quantitymeasurement.model.QuantityMeasurementEntity;
+
 import java.util.List;
 
 public class QuantityMeasurementDatabaseRepositoryTest {

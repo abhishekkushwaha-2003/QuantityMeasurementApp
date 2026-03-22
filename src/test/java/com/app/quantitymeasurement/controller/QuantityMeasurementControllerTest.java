@@ -1,56 +1,39 @@
 package com.app.quantitymeasurement.controller;
 
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
 
-import com.app.quantitymeasurement.entity.QuantityDTO;
-import com.app.quantitymeasurement.service.IQuantityMeasurementService;
-import com.app.quantitymeasurement.unit.LengthUnit;
-
+@SpringBootTest
+@AutoConfigureMockMvc
 public class QuantityMeasurementControllerTest {
 
-    private QuantityMeasurementController controller;
-    private IQuantityMeasurementService mockService;
-
-    @Before
-    public void setUp() {
-        mockService = mock(IQuantityMeasurementService.class);
-        controller = new QuantityMeasurementController(mockService);
-    }
+    @Autowired
+    private MockMvc mockMvc;
 
     @Test
-    public void givenValidRequest_WhenPerformAdditionCalled_ShouldReturnResultDTO() {
-        QuantityDTO q1 = new QuantityDTO(2.0, LengthUnit.FEET);
-        QuantityDTO q2 = new QuantityDTO(24.0, LengthUnit.INCHES);
-        QuantityDTO target = new QuantityDTO(0.0, LengthUnit.FEET);
-        QuantityDTO expectedResult = new QuantityDTO(4.0, LengthUnit.FEET);
+    @WithMockUser // for security bypass dummy aadmi 
+    public void testMeasurementConversionAndSaving() throws Exception {
 
-        when(mockService.add(any(), any(), any())).thenReturn(expectedResult);
-
-        QuantityDTO result = controller.performAddition(q1, q2, target);
-
-        assertNotNull(result);
-        assertEquals(4.0, result.getValue(), 0.001);
-        verify(mockService, times(1)).add(any(), any(), any());
-    }
-
-    @Test
-    public void givenValidRequest_WhenPerformSubtractionCalled_ShouldReturnResultDTO() {
-        QuantityDTO q1 = new QuantityDTO(2.0, LengthUnit.FEET);
-        QuantityDTO q2 = new QuantityDTO(12.0, LengthUnit.INCHES);
-        QuantityDTO target = new QuantityDTO(0.0, LengthUnit.FEET);
-        QuantityDTO expectedResult = new QuantityDTO(1.0, LengthUnit.FEET);
-
-        when(mockService.subtract(any(), any(), any())).thenReturn(expectedResult);
-
-        QuantityDTO result = controller.performSubtraction(q1, q2, target);
-
-        assertNotNull(result);
-        assertEquals(1.0, result.getValue(), 0.001);
-        verify(mockService, times(1)).subtract(any(), any(), any());
+        String jsonRequest = """
+            {
+                "thisQuantityDTO": { "value": 1.0, "unit": "FEET", "measurementType": "LengthUnit" },
+                "thatQuantityDTO": { "value": 12.0, "unit": "INCHES", "measurementType": "LengthUnit" }
+            }
+            """;
+        
+        mockMvc.perform(post("/api/v1/quantities/compare")
+                .with(csrf()) // csrf token for post request 
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonRequest))
+                .andExpect(status().isOk()); //comparison  
     }
 }

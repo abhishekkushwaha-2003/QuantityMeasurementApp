@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.app.quantitymeasurement.controller.QuantityMeasurementController;
-import com.app.quantitymeasurement.entity.QuantityDTO;
+import com.app.quantitymeasurement.model.QuantityDTO;
 import com.app.quantitymeasurement.repository.QuantityMeasurementDatabaseRepository;
 import com.app.quantitymeasurement.service.QuantityMeasurementServiceImpl;
 import com.app.quantitymeasurement.unit.VolumeUnit;

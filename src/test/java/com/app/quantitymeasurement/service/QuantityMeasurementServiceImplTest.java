@@ -1,59 +1,82 @@
 package com.app.quantitymeasurement.service;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach; 
+import org.junit.jupiter.api.Test;
 
-import com.app.quantitymeasurement.entity.QuantityDTO;
-import com.app.quantitymeasurement.repository.IQuantityMeasurementRepository;
-import com.app.quantitymeasurement.unit.LengthUnit;
-import com.app.quantitymeasurement.unit.WeightUnit;
+import com.app.quantitymeasurement.dto.QuantityMeasurementDTO;
+import com.app.quantitymeasurement.model.QuantityDTO;
+import com.app.quantitymeasurement.model.QuantityMeasurementEntity;
+import com.app.quantitymeasurement.repository.QuantityMeasurementRepository;
+import com.app.quantitymeasurement.exception.CategoryMismatchException;
 
 public class QuantityMeasurementServiceImplTest {
 
     private QuantityMeasurementServiceImpl service;
-    private IQuantityMeasurementRepository mockRepo;
+    private QuantityMeasurementRepository mockRepo;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        mockRepo = mock(IQuantityMeasurementRepository.class);
+        mockRepo = mock(QuantityMeasurementRepository.class);
         service = new QuantityMeasurementServiceImpl(mockRepo);
-        // Repository DB touch na kare isliye mock setup kiya
-        doNothing().when(mockRepo).save(any());
+        
+        // mocking the save to return a dummy entity
+        when(mockRepo.save(any(QuantityMeasurementEntity.class))).thenReturn(new QuantityMeasurementEntity());
     }
 
     @Test
     public void givenTwoQuantities_WhenAdded_ShouldReturnCorrectSum() {
-        QuantityDTO q1 = new QuantityDTO(1.0, WeightUnit.KILOGRAM);
-        QuantityDTO q2 = new QuantityDTO(2000.0, WeightUnit.GRAM);
-        QuantityDTO target = new QuantityDTO(0.0, WeightUnit.KILOGRAM);
 
-        QuantityDTO result = service.add(q1, q2, target);
+        QuantityDTO q1 = new QuantityDTO();
+        q1.value = 1.0; q1.unit = "KILOGRAM"; q1.measurementType = "WeightUnit";
+        
+        QuantityDTO q2 = new QuantityDTO();
+        q2.value = 2000.0; q2.unit = "GRAM"; q2.measurementType = "WeightUnit";
+        
+        QuantityDTO target = new QuantityDTO();
+        target.value = 0.0; target.unit = "KILOGRAM"; target.measurementType = "WeightUnit";
 
-        assertEquals(3.0, result.getValue(), 0.001);
+        QuantityMeasurementDTO result = service.add(q1, q2, target);
+
+        // service returns 3.0 KG (1kg + 2kg)
+        assertEquals(3.0, result.resultValue, 0.001);
         verify(mockRepo, times(1)).save(any());
     }
 
     @Test
     public void givenTwoQuantities_WhenSubtracted_ShouldReturnCorrectDifference() {
-        QuantityDTO q1 = new QuantityDTO(2.0, LengthUnit.FEET);
-        QuantityDTO q2 = new QuantityDTO(12.0, LengthUnit.INCHES);
-        QuantityDTO target = new QuantityDTO(0.0, LengthUnit.FEET);
+        QuantityDTO q1 = new QuantityDTO();
+        q1.value = 2.0; q1.unit = "FEET"; q1.measurementType = "LengthUnit";
+        
+        QuantityDTO q2 = new QuantityDTO();
+        q2.value = 12.0; q2.unit = "INCHES"; q2.measurementType = "LengthUnit";
+        
+        QuantityDTO target = new QuantityDTO();
+        target.value = 0.0; target.unit = "FEET"; target.measurementType = "LengthUnit";
 
-        QuantityDTO result = service.subtract(q1, q2, target);
+        QuantityMeasurementDTO result = service.subtract(q1, q2, target);
 
-        assertEquals(1.0, result.getValue(), 0.001);
+        assertEquals(1.0, result.resultValue, 0.001);
         verify(mockRepo, times(1)).save(any());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void givenDifferentCategories_WhenAdded_ShouldThrowException() {
-        QuantityDTO q1 = new QuantityDTO(1.0, WeightUnit.KILOGRAM);
-        QuantityDTO q2 = new QuantityDTO(1.0, LengthUnit.INCHES);
+        QuantityDTO q1 = new QuantityDTO();
+        q1.value = 1.0; q1.unit = "KILOGRAM"; q1.measurementType = "WeightUnit";
         
-        service.add(q1, q2, null);
+        QuantityDTO q2 = new QuantityDTO();
+        q2.value = 1.0; q2.unit = "INCHES"; q2.measurementType = "LengthUnit";
+
+        assertThrows(CategoryMismatchException.class, () -> {
+            service.add(q1, q2, null);
+        });
     }
 }
