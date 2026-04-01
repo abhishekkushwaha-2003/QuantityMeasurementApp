@@ -1,38 +1,49 @@
-# Quantity Measurement Application  
-## Test-Driven Development (TDD) | OOP | SOLID | Interface Segregation Principle  
+## 📅 14 March 2026
 
----
-
-## 📅 23 Feb 2026  
-### 🔹 UC14 – Temperature Measurement with Selective Arithmetic Support & IMeasurable Refactoring  
-**Branch:** `feature/UC14-TemperatureMeasurement`
+## 🔹 UC16 – JDBC Database Integration  
+**Branch:** `feature/UC16-JDBCPersistence`
 
 ### Objective
-- Add Temperature measurement support (Celsius, Fahrenheit, Kelvin)  
-- Support equality and conversion for temperature  
-- Restrict unsupported arithmetic operations (add, subtract, divide)  
-- Refactor `IMeasurable` to allow optional arithmetic operations  
-- Maintain backward compatibility with UC1–UC13  
+Enable persistent storage of measurement data using a **relational SQL database** while maintaining clean architecture and high performance.
 
-### Implementation
-- Introduced `TemperatureUnit` enum (CELSIUS, FAHRENHEIT, KELVIN)  
-- Added `SupportsArithmetic` functional interface  
-- Added default methods in `IMeasurable` for operation validation  
-- Used lambda expressions for non-linear temperature conversion formulas  
-- Disabled arithmetic operations for temperature via override  
-- Updated `Quantity` to validate operation support before execution  
-- Preserved cross-category type safety using generics  
-
-### Result
-- Temperature supports only equality and conversion  
-- Unsupported operations throw `UnsupportedOperationException`  
-- Interface Segregation Principle properly applied  
-- No changes required for Length, Weight, or Volume units  
-- All UC1–UC13 test cases pass without modification  
-- System now supports category-specific operational constraints  
-
-Future measurement categories with different rules can be added without breaking the architecture.
-
-- [feature/UC14-TemperatureMeasurement](https://github.com/abhishekkushwaha-2003/QuantityMeasurementApp/tree/feature/UC14-TemperatureMeasurement)
+Key goals:
+- Enable **persistent storage of measurement data**
+- Implement **industry-standard connection pooling** for optimized performance
+- Secure database operations against vulnerabilities such as **SQL Injection**
+- Seamlessly replace **local cache storage with database storage** using **Dependency Injection**
+- Ensure **complete mocked test coverage** for the persistence layer
 
 ---
+
+### Implementation
+
+#### 1. JDBC Persistence Layer
+- Integrated a **JDBC-based persistence layer**
+- Configured an **embedded H2 SQL Database** for seamless data storage and retrieval
+
+#### 2. Connection Pooling
+Implemented `ConnectionPool` utility:
+- Utilized **HikariCP** for **high-performance database connection management**
+- Ensured efficient and reliable connection reuse
+
+#### 3. Database Repository
+Created `QuantityMeasurementDatabaseRepository`:
+- Used **Parameterized Prepared Statements** to prevent **SQL Injection**
+- Implemented SQL logic for **saving and retrieving historical measurement data**
+
+#### 4. Dependency Injection
+Refactored `QuantityMeasurementApp`:
+- Enabled **dynamic injection of the database repository**
+- Ensured **business logic remained unchanged**
+
+#### 5. Testing
+Achieved **100% test coverage**:
+- Used **JUnit** and **Mockito**
+- Mocked repository interactions
+- Validated **Controller and Service layer behavior independently**
+
+---
+
+### 🔗 Source Code
+
+[feature/UC16-JDBCPersistence](https://github.com/abhishekkushwaha-2003/QuantityMeasurementApp/tree/feature/UC16-JDBCPersistence)
