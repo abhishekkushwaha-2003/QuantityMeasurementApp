@@ -1,7 +1,7 @@
 # 📊 UC17 – Audit History & Persistence with Lombok
 
 **📅 Date:** 20 March 2026  
-**🌿 Branch:** `feature/UC17-AuditHistoryPersistence`
+**🌿 Branch:** `feature/UC17-SpringBackend-integration`
 
 ---
 
