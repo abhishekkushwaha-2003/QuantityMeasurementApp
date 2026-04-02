@@ -1,210 +1,126 @@
-# 🚀 Quantity Measurement App (UC18 - JWT + OAuth2)
+# 🔐 UC18 – Google Authentication & User Management
 
-## 📌 Overview
-
-The **Quantity Measurement App** is a Spring Boot-based REST API that supports various measurement operations like **Length, Weight, Volume, and Temperature**.
-
-This project is enhanced with **advanced security features** including:
-
-* 🔐 JWT Authentication
-* 🌐 GitHub OAuth2 Login
-* 🗄️ JPA & Database Integration
-* 📊 Swagger API Documentation
-* ⚡ Robust Exception Handling & Validation
+📅 **Date:** 23 March 2026  
+🌿 **Branch:** `feature/UC18-GoogleAuthUserManagement`
 
 ---
 
-## 🎯 Key Features
+## Objective
 
-### 🧮 Core Functionalities
+This use case focuses on securing the **Quantity Measurement Application** by implementing a multi-layered authentication system using:
 
-* Compare quantities
-* Convert units
-* Arithmetic operations (Add, Subtract, Divide)
-* Measurement history tracking
-* Error tracking & reporting
+- Google OAuth2
+- JWT (JSON Web Tokens)
 
 ---
 
-### 🔐 Security Features (UC18)
+## Key Goals
 
-* JWT-based Authentication (Stateless)
-* GitHub OAuth2 Login
-* Secure REST APIs
-* Custom Authentication Filter
-* Unauthorized access handling (401 response)
-
----
-
-### 🗄️ Database & Persistence
-
-* JPA (Hibernate ORM)
-* H2 (Development)
-* MySQL (Production ready)
-* Indexed queries for performance
+- Integrate Google Sign-In for seamless user authentication  
+- Implement JWT-based stateless authorization for API security  
+- Secure all measurement and history endpoints from unauthorized access  
+- Manage user identities and roles using a persistent database layer  
 
 ---
 
-### 📊 API & Monitoring
+## Implementation Details
 
-* Swagger UI (API Testing)
-* Spring Boot Actuator
-* Logging & Debugging support
+### 1. 🔒 Security Configuration (Spring Security)
 
----
+Created `SecurityConfig` to manage the security filter chain:
 
-## 🏗️ Project Structure
-
-```
-com.app
-│
-├── config              # Security & Swagger Config
-├── controller          # REST Controllers
-├── service             # Business Logic
-├── repository          # JPA Repositories
-├── model               # Entities & Domain Models
-├── dto                 # Request/Response DTOs
-├── security            # JWT & OAuth2 Components
-├── exception           # Global Exception Handling
-└── core                # Measurement Logic
-```
+- Enabled OAuth2 Login with Google as the provider  
+- Configured Stateless Session Management (no `JSESSIONID`)  
+- Set up public vs. protected route access (`/auth/**` is public)  
+- Disabled CSRF for REST API compatibility  
 
 ---
 
-## ⚙️ Tech Stack
+### 2. Identity & Token Management (JWT)
 
-| Layer      | Technology                   |
-| ---------- | ---------------------------- |
-| Backend    | Java, Spring Boot            |
-| Security   | Spring Security, JWT, OAuth2 |
-| Database   | H2, MySQL                    |
-| ORM        | Hibernate (JPA)              |
-| API Docs   | Swagger (OpenAPI)            |
-| Build Tool | Maven                        |
+Developed a custom `JwtService` for:
 
----
+- **Token Generation** → Creating signed tokens upon successful login  
+- **Token Validation** → Checking signature, expiration, and user claims  
+- **Extraction** → Retrieving user details from the `Authorization: Bearer` header  
 
-## 🔑 Authentication Flow
+Implemented `JwtAuthenticationFilter`:
 
-### 🔐 1. JWT Login
-
-```
-POST /auth/login
-```
-
-➡️ Returns JWT Token
+- Intercepts every request  
+- Validates JWT before it reaches the controller  
 
 ---
 
-### 🌐 2. GitHub OAuth Login
+### 3. User Service & Persistence
 
-```
-GET /oauth2/authorization/github
-```
+Enhanced `CustomUserDetailsService`:
 
-➡️ Redirects to GitHub
-➡️ Returns JWT after successful login
+- Integrates with `UserRepository` to fetch user details  
+- Maps Google-authenticated users to local database records  
 
----
+#### 🔐 Password Protection
 
-### 🔒 3. Access Protected APIs
-
-Add header:
-
-```
-Authorization: Bearer <JWT_TOKEN>
-```
+- Used `BCryptPasswordEncoder` for secure credential storage  
 
 ---
 
-## 📌 API Endpoints
+### 4. Authentication Flow
 
-### 🔹 Quantity Operations
+1. **User Login**  
+   User authenticates via Google OAuth2 or custom Login API  
 
-| Method | Endpoint                      | Description         |
-| ------ | ----------------------------- | ------------------- |
-| POST   | `/api/v1/quantities/compare`  | Compare quantities  |
-| POST   | `/api/v1/quantities/convert`  | Convert units       |
-| POST   | `/api/v1/quantities/add`      | Add quantities      |
-| POST   | `/api/v1/quantities/subtract` | Subtract quantities |
-| POST   | `/api/v1/quantities/divide`   | Divide quantities   |
+2. **Validation**  
+   Backend validates credentials / OAuth callback  
 
----
+3. **JWT Issuance**  
+   A unique token is generated and sent to the client  
 
-### 🔹 History & Reports
+4. **Authorized Request**  
+   Client sends JWT in header:
+   ```
+   Authorization: Bearer <JWT>
+   ```
 
-| Method | Endpoint                                           |
-| ------ | -------------------------------------------------- |
-| GET    | `/api/v1/quantities/history/operation/{operation}` |
-| GET    | `/api/v1/quantities/history/type/{type}`           |
-| GET    | `/api/v1/quantities/count/{operation}`             |
-| GET    | `/api/v1/quantities/history/errored`               |
-
----
-
-### 🔹 Auth APIs
-
-| Method | Endpoint         |
-| ------ | ---------------- |
-| POST   | `/auth/register` |
-| POST   | `/auth/login`    |
+5. **Access Granted**  
+   Filters verify token and allow access to:
+   - `/compare`
+   - `/add`
+   - `/history`
 
 ---
 
-## ⚙️ Configuration
+### 5. Testing & Quality Assurance
 
-### 🔐 JWT Properties
+Updated test suite using **JUnit 5** and **MockMvc**:
 
-```properties
-jwt.secret=your_secret_key
-jwt.expiration=86400000
-```
+#### Security Tests
+- `401 Unauthorized` → Missing/invalid token  
+- `200 OK` → Valid token  
 
----
+#### Service Tests
+- Verified JWT generation and parsing logic  
 
-### 🌐 GitHub OAuth Config
-
-```properties
-spring.security.oauth2.client.registration.github.client-id=YOUR_CLIENT_ID
-spring.security.oauth2.client.registration.github.client-secret=YOUR_CLIENT_SECRET
-spring.security.oauth2.client.registration.github.scope=user:email
-```
+#### 🔧 Additional Practices
+- Used `@WithMockUser` for controller testing  
+- Applied Mockito for mocking  
+- Used Lombok for clean DTOs  
 
 ---
 
-## 📊 Swagger UI
+## Tech Stack
 
-Access API docs:
-
-```
-http://localhost:8080/swagger-ui/index.html
-```
-
----
-
-## 🧪 Testing
-
-* Unit & Integration tests included
-* Security disabled for test profile
-* Covers:
-
-  * API endpoints
-  * Database persistence
-  * Validation scenarios
+- Spring Boot  
+- Spring Security  
+- Google OAuth2  
+- JWT (JSON Web Token)  
+- H2 Database  
+- Project Lombok  
+- JUnit 5 / Mockito  
 
 ---
 
-## ⚠️ Important Notes
+## 🔗 Source Code
 
-* OAuth login must be tested via browser (not Postman)
-* JWT required for all protected endpoints
-* Unauthorized requests return `401` (not redirect)
+📁 [feature/UC18-GoogleAuthUserManagement](https://github.com/abhishekkushwaha-2003/QuantityMeasurementApp/tree/feature/UC18-GoogleAuthUserManagement)
 
 ---
-
-
-### Author👨‍💻
-
-[Harshal Choudhary](https://github.com/Harshal-25C) - Software Developer👨‍💻 | Cloud Enthusiast            
-B.Tech - `[Computer Science & Engineering]`         
-Java | Maven | OOPs | Clean Architecture 
