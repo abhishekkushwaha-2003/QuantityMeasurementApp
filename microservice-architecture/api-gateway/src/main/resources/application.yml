@@ -9,10 +9,11 @@ spring:
     gateway:
       # Global CORS for all routes
       globalcors:
+        add-to-simple-url-handler-mapping: true
         cors-configurations:
           '[/**]':
-            allowedOrigins:
-              - "http://localhost:3000"
+            allowedOriginPatterns:
+              - "https://*.vercel.app"
             allowedMethods:
               - GET
               - POST
@@ -21,7 +22,10 @@ spring:
               - OPTIONS
             allowedHeaders:
               - "*"
-            allowCredentials: true
+            exposedHeaders:
+              - "*"
+ 
+            allowCredentials: false
 
       routes:
 
